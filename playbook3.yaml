@@ -1,0 +1,33 @@
+---
+ - name: Super puper Playbook
+   hosts: all
+   become: yes
+
+   vars:
+      msg1: Hello
+      msg2: world
+      secret: SAD&@^$OUJWKNLSDQ
+
+   tasks:
+    - name: Print secret var
+      debug:
+         var: secret
+
+    - debug:
+         msg: "Secret var: {{ secret }}"
+
+    - set_fact: full_message="{{ msg1 }} {{ msg2 }}!!!"
+
+    - name: Print full message
+      debug:
+         var: full_message
+
+    - name: Print Linux destribution
+      debug:
+         var: ansible_distribution
+
+    - shell: uptime
+      register: rezults
+
+    - debug:
+         var: rezults

@@ -1,0 +1,5 @@
+[vm_servers]
+debianVM ansible_host=127.0.0.1 ansible_port=42
+
+[cloud_servers]
+UbuntuCloud ansible_host=149.154.69.147
