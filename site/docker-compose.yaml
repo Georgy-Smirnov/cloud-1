@@ -1,0 +1,57 @@
+version: '3.8'
+
+networks:
+   app:
+      name: app
+      driver: bridge
+
+services:
+   mysql:
+      image: mysql
+      container_name: mysql
+      build: ./mysql/
+      volumes:
+       - database:/var/lib/mysql/
+      networks:
+       - app
+   php:
+      image: php
+      container_name: php
+      build: ./php_fpm/
+      environment:
+         - WORDPRESS_DB_NAME=wordpress
+         - WORDPRESS_DB_HOST=mysql:3306
+         - WORDPRESS_DB_USER=kjaco
+         - WORDPRESS_DB_PASSWORD=123
+      volumes:
+         - php:/var/www/html/
+      networks:
+         - app
+   nginx:
+      image: nginx
+      container_name: nginx
+      build: ./nginx/
+      depends_on:
+         - php
+      volumes:
+         - php:/var/www/html/
+      networks:
+         - app
+      ports:
+       - "80:80"
+
+volumes:
+   php:
+      name: php
+      driver: local
+      driver_opts:
+         type: none
+         o: bind
+         device: ./www_data/php
+   database:
+      name: database
+      driver: local
+      driver_opts:
+         type: none
+         o: bind
+         device: ./www_data/database
