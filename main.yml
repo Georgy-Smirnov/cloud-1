@@ -1,0 +1,6 @@
+---
+- name: main
+  hosts: virtual_servers
+  roles:
+    - install
+    - docker-compose

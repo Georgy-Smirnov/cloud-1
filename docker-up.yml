@@ -1,0 +1,8 @@
+---
+- name: playbook for up docker containers
+  hosts: virtual_servers
+  tasks:
+    - name: docker-compose up
+      docker_compose:
+        project_src: /home/docker-compose/
+        state: present

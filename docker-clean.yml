@@ -1,0 +1,32 @@
+---
+- name: playbook for delete docker object
+  hosts: virtual_servers
+  tasks:
+    - name: docker cotainer down
+      docker_compose:
+        project_src: /home/docker-compose/
+        state: absent
+    - name: delete volume data
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /home/docker-compose/www_data/database/
+        - /home/docker-compose/www_data/php/
+      notify: create volume dir
+    - name: prune everything
+      docker_prune:
+        containers: true
+        images: true
+        networks: true
+        volumes: true
+        builder_cache: true
+  handlers:
+    - name: create volume dir
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /home/docker-compose/www_data/database/
+        - /home/docker-compose/www_data/php/
+  

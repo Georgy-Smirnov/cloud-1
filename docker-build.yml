@@ -1,0 +1,5 @@
+---
+- name: tect connection
+  hosts: virtual_servers
+  roles:
+    - docker-compose

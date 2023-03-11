@@ -1,0 +1,9 @@
+---
+- name: playbook for down docker containers
+  hosts: virtual_servers
+  tasks:
+    - name: docker cotainer down
+      docker_compose:
+        project_src: /home/docker-compose/
+        state: absent
+  

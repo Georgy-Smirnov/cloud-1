@@ -1,0 +1,8 @@
+---
+# handlers file for docker-compose
+- name: docker-compose build
+  docker_compose:
+    project_src: /home/docker-compose/
+    state: present
+    build: true
+    nocache: true

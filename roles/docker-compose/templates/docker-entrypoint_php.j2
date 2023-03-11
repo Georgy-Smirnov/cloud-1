@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if grep -q php7.4-fpm.sock /etc/php/7.4/fpm/pool.d/www.conf; then
+   sed -i "s/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/g" /etc/php/7.4/fpm/pool.d/www.conf
+fi
+
+if grep -q localhost /var/www/html/phpmyadmin/config.inc.php; then
+   sed -i "s/localhost/mysql:3306/g" /var/www/html/phpmyadmin/config.inc.php
+fi
+
+if ! [ -f /var/www/html/wp-config.php ]; then
+   wp config create --allow-root --skip-check --path=/var/www/html --dbname={{ db_name }} --dbuser={{ db_user }} --dbpass={{ db_password }} --dbhost=mysql:3306 --dbprefix=wp_
+   wp core install --allow-root --path=/var/www/html/ --url={{ dns }} --title={{ wp_title }} --admin_user={{ wp_user }} --admin_password={{ wp_password }} --admin_email={{ wp_email }}
+   wp theme install --allow-root --path=/var/www/html/ --activate {{ wp_theme }}
+fi
+
+exec "$@"

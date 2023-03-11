@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 networks:
    app:
@@ -9,28 +9,27 @@ services:
    mysql:
       image: mysql
       container_name: mysql
-      build: ./mysql/
+      build: /home/docker-compose/mysql/
       volumes:
        - database:/var/lib/mysql/
       networks:
        - app
+      restart: always
    php:
       image: php
       container_name: php
-      build: ./php_fpm/
-      environment:
-         - WORDPRESS_DB_NAME=wordpress
-         - WORDPRESS_DB_HOST=mysql:3306
-         - WORDPRESS_DB_USER=kjaco
-         - WORDPRESS_DB_PASSWORD=123
+      build: /home/docker-compose/php_fpm/
       volumes:
          - php:/var/www/html/
       networks:
          - app
+      depends_on:
+         - mysql
+      restart: always
    nginx:
       image: nginx
       container_name: nginx
-      build: ./nginx/
+      build: /home/docker-compose/nginx/
       depends_on:
          - php
       volumes:
@@ -38,7 +37,9 @@ services:
       networks:
          - app
       ports:
+       - "443:443"
        - "80:80"
+      restart: always
 
 volumes:
    php:
@@ -47,11 +48,11 @@ volumes:
       driver_opts:
          type: none
          o: bind
-         device: ./www_data/php
+         device: /home/docker-compose/www_data/php
    database:
       name: database
       driver: local
       driver_opts:
          type: none
          o: bind
-         device: ./www_data/database
+         device: /home/docker-compose/www_data/database

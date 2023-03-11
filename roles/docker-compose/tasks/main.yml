@@ -1,0 +1,26 @@
+---
+# tasks file for docker-compose
+- name: copy docker files
+  copy:
+    src: "{{ item }}"
+    dest: /home/docker-compose
+  loop:
+    - mysql
+    - nginx
+    - php_fpm
+    - www_data
+    - docker-compose.yaml
+  notify: docker-compose build
+
+- name: copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - src: default.j2
+      dest: /home/docker-compose/nginx/default
+    - src: docker-entrypoint_mysql.j2
+      dest: /home/docker-compose/mysql/docker-entrypoint.sh
+    - src: docker-entrypoint_php.j2
+      dest: /home/docker-compose/php_fpm/docker-entrypoint.sh
+  notify: docker-compose build

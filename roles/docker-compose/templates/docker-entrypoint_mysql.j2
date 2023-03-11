@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if ! [ -d /var/lib/mysql/{{ db_name }} ] ; then
+service mariadb start
+echo "CREATE USER '{{ db_user }}'@'%' IDENTIFIED BY '{{ db_password }}';"| mysql -u root --skip-password
+echo "GRANT ALL PRIVILEGES ON *.* TO '{{ db_user }}'@'%';"| mysql -u root --skip-password
+echo "FLUSH PRIVILEGES;"| mysql -u root --skip-password
+echo "CREATE DATABASE {{ db_name }};"| mysql -u root --skip-password
+echo "GRANT ALL PRIVILEGES ON {{ db_name }}.* TO '{{ db_user }}'@'%' WITH GRANT OPTION;"| mysql -u root --skip-password
+echo "FLUSH PRIVILEGES;"| mysql -u root --skip-password
+service mariadb stop
+fi
+
+sed -i "s/# port/port/g" /etc/mysql/my.cnf
+sed -i "s/socket/# socket/g" /etc/mysql/my.cnf
+sed -i "s/bind-address/#bind-address/g" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+exec "$@"
